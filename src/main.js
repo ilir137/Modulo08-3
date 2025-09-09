@@ -1,17 +1,13 @@
-import { cartas } from "./elementos.js";
-import { animales } from "./modelo.js";
-import { mezclarArray } from "./motor.js";
-import { voltearCarta } from "./ui.js"
+import { btnCerrarDialogo, dialogPartidaGanada } from './elementos.js';
+import { crearTablero, agregarEventoBotonIniciarPartida, cerrarDialogo } from './ui.js';
 
-const barajaCartas = mezclarArray(animales.slice()); // Usamos .slice() para no modificar el original
-var cartaAnterior;
+document.addEventListener('DOMContentLoaded', () => {
+    crearTablero();
+    agregarEventoBotonIniciarPartida();
+})
 
-if (cartas !== null && cartas !== undefined) {
-    cartas.forEach((carta, index) => {
-        cartaAnterior = carta;
-        carta.addEventListener('click', () => {
-            voltearCarta(carta, index, barajaCartas, cartaAnterior);
-            cartaAnterior = carta;
-        });
-    });
+if (btnCerrarDialogo && btnCerrarDialogo instanceof HTMLButtonElement){
+    btnCerrarDialogo.addEventListener("click", () => {
+        cerrarDialogo(dialogPartidaGanada);
+    })
 }
