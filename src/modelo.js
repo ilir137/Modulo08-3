@@ -1,35 +1,62 @@
-export const animal1 = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/refs/heads/main/memo/1.png"; // Leon
-export const animal2 = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/refs/heads/main/memo/2.png"; // Buho
-export const animal3 = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/refs/heads/main/memo/3.png"; // Perro
-export const animal4 = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/refs/heads/main/memo/4.png"; // Gallina
-export const animal5 = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/refs/heads/main/memo/5.png"; // Cerdo
-export const animal6 = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/refs/heads/main/memo/6.png"; // Abeja
+const infoCartas = [
+  {
+    idFoto: 1,
+    imagen:
+      "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/memo/1.png",
+  },
+  {
+    idFoto: 2,
+    imagen:
+      "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/memo/2.png",
+  },
+  {
+    idFoto: 3,
+    imagen:
+      "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/memo/3.png",
+  },
+  {
+    idFoto: 4,
+    imagen:
+      "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/memo/4.png",
+  },
+  {
+    idFoto: 5,
+    imagen:
+      "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/memo/5.png",
+  },
+  {
+    idFoto: 6,
+    imagen:
+      "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/memo/6.png",
+  },
+];
 
-export const animales = [animal1, animal2, animal3, animal4, animal5, animal6, animal1, animal2, animal3, animal4, animal5, animal6];
+const crearColeccionDeCartasInicial = (infoCartas) => {
 
-var imagen, imagenAnterior;
-var puntos = 0;
+    const cartasTransformadas = infoCartas.map((carta) => {
+        return {
+        idFoto: carta.idFoto,
+        imagen: carta.imagen,
+        encontrada: false,
+        estaVuelta: false,
+        }
+    });
 
-export function setImagen(valor){
-    imagen = valor;
+  return [...cartasTransformadas, ...cartasTransformadas];
 }
 
-export function getImagen(){
-    return imagen;
-}
+let cartas = crearColeccionDeCartasInicial(infoCartas);
 
-export function setImagenAnterior(valor){
-    imagenAnterior = valor;
-}
+// type EstadoPartida =
+//   | "PartidaNoIniciada"
+//   | "CeroCartasLevantadas"
+//   | "UnaCartaLevantada"
+//   | "DosCartasLevantadas"
+//   | "PartidaCompleta";
 
-export function getImagenAnterior(){
-    return imagenAnterior;
-}
-
-export function setPuntos(valor){
-    puntos = valor;
-}
-
-export function getPuntos(){
-    return puntos
-}
+export let tablero = {
+    cartas: cartas,
+    estadoPartida: "PartidaNoIniciada",
+    indiceCartaVolteadaA: undefined,
+    indiceCartaVolteadaB: undefined,
+};
