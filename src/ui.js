@@ -1,3 +1,4 @@
+import { display } from './elementos.js';
 import { tablero, tiempoDeJuego } from './modelo.js';
 import {
     iniciaPartida, 
@@ -118,7 +119,7 @@ function mostrarDialogo(){
 }
 
 function actualizarDisplay(tiempoDeJuego) {
-    document.getElementById('display').textContent =
+    display.textContent =
         `${formatearTiempo(tiempoDeJuego.horas)}:${formatearTiempo(tiempoDeJuego.minutos)}:${formatearTiempo(tiempoDeJuego.segundos)}`;
 }
 
