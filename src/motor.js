@@ -60,3 +60,19 @@ export const iniciaPartida = (tablero) => {
     tablero.cartas = [...cartasBarajadas];
     tablero.estadoPartida = 'CeroCartasLevantadas';
 }
+
+export function aumentarTiempo(tiempoDeJuego) {
+    tiempoDeJuego.segundos++;
+    if (tiempoDeJuego.segundos === 60) {
+        tiempoDeJuego.segundos = 0;
+        tiempoDeJuego.minutos++;
+        if (tiempoDeJuego.minutos === 60) {
+            tiempoDeJuego.minutos = 0;
+            tiempoDeJuego.horas++;
+        }
+    }
+}
+
+export function formatearTiempo(unidad) {
+    return unidad < 10 ? '0' + unidad : unidad;
+}
