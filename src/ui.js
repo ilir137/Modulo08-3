@@ -1,4 +1,4 @@
-import { tablero } from './modelo.js';
+import { tablero, tiempoDeJuego } from './modelo.js';
 import {
     iniciaPartida, 
     esVolteableLaCarta, 
@@ -6,8 +6,12 @@ import {
     sonPareja, 
     parejaEncontrada, 
     parejaNoEncontrada,
-    esPartidaCompleta
+    esPartidaCompleta,
+    aumentarTiempo,
+    formatearTiempo
 } from './motor.js';
+
+let intervalo;
 
 export const crearTablero = () => {
     for (let indice = 0; indice < tablero.cartas.length; indice++) {
@@ -49,6 +53,7 @@ const mirarSiEsLaSegundaCarta = (tablero) => {
             if (esPartidaCompleta(tablero)) {
                 console.log('Has completado la partida. Enhorabuena, encontraste todas las parejas!!');
                 mostrarDialogo();
+                pararCronometro();
             }
         } else {
             parejaNoEncontrada(tablero, indiceCartaA, indiceCartaB);
@@ -93,6 +98,10 @@ export const agregarEventoBotonIniciarPartida = () => {
     if (botonEmpezarPartida && botonEmpezarPartida instanceof HTMLButtonElement) {
         botonEmpezarPartida.addEventListener('click', () => {
             iniciaPartida(tablero);
+            intervalo = setInterval(() => {
+                aumentarTiempo(tiempoDeJuego);
+                actualizarDisplay(tiempoDeJuego);
+            }, 1000);
         })
     }
 }
@@ -106,4 +115,19 @@ export function cerrarDialogo(elemento) {
 
 function mostrarDialogo(){
     window.dialogPartidaGanada.showModal();
+}
+
+function actualizarDisplay(tiempoDeJuego) {
+    document.getElementById('display').textContent =
+        `${formatearTiempo(tiempoDeJuego.horas)}:${formatearTiempo(tiempoDeJuego.minutos)}:${formatearTiempo(tiempoDeJuego.segundos)}`;
+}
+
+function pararCronometro(){
+    clearInterval(intervalo);
+    /*
+    tiempoDeJuego.segundos = 0;
+    tiempoDeJuego.minutos = 0;
+    tiempoDeJuego.horas = 0;
+    actualizarDisplay(tiempoDeJuego);
+    */
 }
