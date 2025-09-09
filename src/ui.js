@@ -1,26 +1,109 @@
-import { colorCartaVolteada } from "./elementos.js";
-import { inicializar, sonPareja, parejaNoEncontrada } from "./motor.js"
-import { getImagen, setImagen, getImagenAnterior, setImagenAnterior, getPuntos, setPuntos } from "./modelo.js"
+import { tablero } from './modelo.js';
+import {
+    iniciaPartida, 
+    esVolteableLaCarta, 
+    voltearLaCarta, 
+    sonPareja, 
+    parejaEncontrada, 
+    parejaNoEncontrada,
+    esPartidaCompleta
+} from './motor.js';
 
-export function voltearCarta(carta, index, baraja, cartaAnterior){
-    carta.classList.add('volteada'); // Agregar clase para el efecto de volteo
-    setTimeout(() => {
-        carta.style.backgroundColor = colorCartaVolteada;
-        carta.innerHTML = `<img src="${baraja[index]}" alt="Animal" class="imgAnimal">`;
+export const crearTablero = () => {
+    for (let indice = 0; indice < tablero.cartas.length; indice++) {
+        mapearDivsACarta(indice, tablero);
+    }
+}
 
-        if (getImagen() !== undefined) setImagenAnterior( getImagen() );
-        setImagen(baraja[index]);
+const mapearDivsACarta = (indiceCarta, tablero) => {
+    const dataIndiceId = `[data-indice-id="${indiceCarta}"]`;
+    const elementoDiv = document.querySelector(`div${dataIndiceId}`);
 
-        if (getImagenAnterior() !== getImagen() && getImagenAnterior() !== undefined){  // Si las 2 ultimas imagenes son diferentes pero la primera no es undefined
-            parejaNoEncontrada(carta, cartaAnterior);
+    if (elementoDiv && elementoDiv instanceof HTMLDivElement) {
+        elementoDiv.addEventListener('click', () => {
+            if (tablero.estadoPartida !== 'PartidaNoIniciada' && tablero.estadoPartida !== 'PartidaCompleta') {
+                if (esVolteableLaCarta(tablero, indiceCarta)) {
+                    sePuedeVoltearLaCarta(indiceCarta, dataIndiceId);
+                } else {
+                    noSePuedeVoltearLaCarta();
+                }
+            }
+        })
+    }
+}
+
+const sePuedeVoltearLaCarta = (indiceCarta, dataIndiceId) => {
+    console.log('se puede voltear la carta');
+    voltearLaCarta(tablero, indiceCarta);
+    mostrarImagenAnimal(dataIndiceId, indiceCarta);
+    mirarSiEsLaSegundaCarta(tablero)
+}
+
+const mirarSiEsLaSegundaCarta = (tablero) => {
+    const indiceCartaA = tablero.indiceCartaVolteadaA;
+    const indiceCartaB = tablero.indiceCartaVolteadaB;
+
+    if (indiceCartaA !== undefined && indiceCartaB !== undefined) {
+        if (sonPareja(indiceCartaA, indiceCartaB, tablero)) {
+            parejaEncontrada(tablero, indiceCartaA, indiceCartaB);
+            if (esPartidaCompleta(tablero)) {
+                console.log('Has completado la partida. Enhorabuena, encontraste todas las parejas!!');
+                mostrarDialogo();
+            }
+        } else {
+            parejaNoEncontrada(tablero, indiceCartaA, indiceCartaB);
+            setTimeout(() => { ponerImagenBocaAbajo(tablero.cartas); }, 700);
         }
-        if (getImagenAnterior() === getImagen() && getImagen() !== undefined){ // Si las imagenes son iguales y no sean undefined
-            sonPareja();
+    }
+    console.log(tablero);
+}
+
+const ponerImagenBocaAbajo = (cartas) => {
+    for (let indice = 0; indice < cartas.length; indice++) {
+        ocultarImagenAnimal(cartas, indice);
+    }
+}
+
+const noSePuedeVoltearLaCarta = () => {
+    console.log('no se puede voltear la carta');
+}
+
+const mostrarImagenAnimal = (dataIndiceId, indiceCarta) => {
+    const elementoImg = document.querySelector(`img${dataIndiceId}`);
+
+    if (elementoImg && elementoImg instanceof HTMLImageElement) {
+        elementoImg.src = tablero.cartas[indiceCarta].imagen;
+    }
+}
+
+function ocultarImagenAnimal(cartas, indice){
+    if (!cartas[indice].encontrada && !cartas[indice].estaVuelta) {
+        const dataIndiceId = `[data-indice-id="${indice}"]`;
+        const elementoImg = document.querySelector(`img${dataIndiceId}`);
+
+        if (elementoImg && elementoImg instanceof HTMLImageElement) {
+            elementoImg.removeAttribute("src");
         }
-        if (getPuntos() === 6){
-            console.log("Has ganao");
-            alert("Has ganado");
-            inicializar();
-        }
-    }, 300); // Espera a que pasen 0,3s, la mitad de la transicion anterior de 0,6s
+    }
+}
+
+export const agregarEventoBotonIniciarPartida = () => {
+    const botonEmpezarPartida = document.getElementById('botonEmpezarPartida');
+    console.log(tablero);
+    if (botonEmpezarPartida && botonEmpezarPartida instanceof HTMLButtonElement) {
+        botonEmpezarPartida.addEventListener('click', () => {
+            iniciaPartida(tablero);
+        })
+    }
+}
+
+export function cerrarDialogo(elemento) {
+    const idElemento = elemento.id;
+
+    const modal = document.getElementById(idElemento);
+    modal.close();
+}
+
+function mostrarDialogo(){
+    window.dialogPartidaGanada.showModal();
 }
