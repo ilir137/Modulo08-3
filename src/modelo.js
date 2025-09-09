@@ -60,3 +60,9 @@ export let tablero = {
     indiceCartaVolteadaA: undefined,
     indiceCartaVolteadaB: undefined,
 };
+
+export const tiempoDeJuego = {
+    horas: 0,
+    minutos: 0,
+    segundos: 0
+}
