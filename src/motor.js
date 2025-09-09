@@ -1,47 +1,62 @@
-import { colorCarta, cartas } from "./elementos.js";
-import { getImagen, setImagen, getImagenAnterior, setImagenAnterior, getPuntos, setPuntos } from "./modelo.js"
+const generarNumeroAleatorio = (indiceDelArray) =>  Math.floor(Math.random() * (indiceDelArray + 1));
 
-export function mezclarArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        // Elegir un índice aleatorio entre 0 e i
-        const j = Math.floor(Math.random() * (i + 1));
-        
-        // Intercambiar elementos array[i] y array[j]
-        [array[i], array[j]] = [array[j], array[i]];
+const barajarCartas = (cartas) => {
+    const copiaCartas = [...cartas];
+    for (let indice = copiaCartas.length - 1; indice > 0; indice--) {
+        let indiceAleatorio = generarNumeroAleatorio(indice);
+
+        [{ ...copiaCartas[indice] }, { ...copiaCartas[indiceAleatorio] }] = [
+        copiaCartas[indiceAleatorio],
+        copiaCartas[indice],
+        ];
     }
-    return array;
+    return copiaCartas;
+};
+
+export const esPartidaCompleta = (tablero) => {
+    return tablero.cartas.every((carta) => {
+        return carta.encontrada && carta.estaVuelta;
+    })
 }
 
-export function ponerEstiloPorDefectoCarta(carta){
-    carta.classList.remove('volteada');
-    carta.style.backgroundColor = colorCarta;
-    carta.innerHTML = "";
+export const esVolteableLaCarta = (tablero, indice) => {
+    return !tablero.cartas[indice].encontrada && !tablero.cartas[indice].estaVuelta;
 }
 
-export function inicializar(){
-    cartas.forEach((carta) => {
-        ponerEstiloPorDefectoCarta(carta);
-    });
-    setImagenAnterior(undefined);
-    setImagen(undefined);
-    setPuntos(0);
+export const voltearLaCarta = (tablero, indice) => {
+    tablero.cartas[indice].estaVuelta = true;
+
+    if (tablero.estadoPartida === 'CeroCartasLevantadas') {
+        tablero.indiceCartaVolteadaA = indice;
+        tablero.estadoPartida = 'UnaCartaLevantada';
+    } else if (tablero.estadoPartida === 'UnaCartaLevantada') {
+        tablero.indiceCartaVolteadaB = indice;
+        tablero.estadoPartida = 'DosCartasLevantadas';
+    }
 }
 
-export function sonPareja(){
-    console.log("Cartas iguales", getImagen(), getImagenAnterior());
-
-    setImagenAnterior(undefined);
-    setImagen(undefined);
-    setPuntos(getPuntos()+1);
-    console.log(getPuntos());
+export const parejaEncontrada = (tablero, indiceA, indiceB) => {
+    tablero.cartas[indiceA].encontrada = true;
+    tablero.cartas[indiceB].encontrada = true;
+    tablero.indiceCartaVolteadaA = undefined;
+    tablero.indiceCartaVolteadaB = undefined;
+    tablero.estadoPartida = 'CeroCartasLevantadas';
 }
 
-export function parejaNoEncontrada(carta, cartaAnterior){
-    console.log("imagenes diferentes", getImagen(), getImagenAnterior());
+export const parejaNoEncontrada = (tablero, indiceA, indiceB) => {
+    tablero.cartas[indiceA].estaVuelta = false;
+    tablero.cartas[indiceB].estaVuelta = false;
+    tablero.indiceCartaVolteadaA = undefined;
+    tablero.indiceCartaVolteadaB = undefined;
+    tablero.estadoPartida = 'CeroCartasLevantadas';
+}
 
-    ponerEstiloPorDefectoCarta(carta);
-    ponerEstiloPorDefectoCarta(cartaAnterior);
+export const sonPareja = (indiceA, indiceB, tablero) => {
+    return tablero.cartas[indiceA].idFoto === tablero.cartas[indiceB].idFoto;
+}
 
-    setImagenAnterior(undefined);
-    setImagen(undefined);
+export const iniciaPartida = (tablero) => {
+    const cartasBarajadas = barajarCartas(tablero.cartas);
+    tablero.cartas = [...cartasBarajadas];
+    tablero.estadoPartida = 'CeroCartasLevantadas';
 }
